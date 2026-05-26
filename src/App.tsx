@@ -86,11 +86,14 @@ function MarqueeBanner({ items }: { items: MarqueeItem[] }) {
   // 根据文字总量动态调整速度（约 40px/s）
   const totalChars = visible.reduce((s, m) => s + m.text.length, 0)
   const duration = Math.max(totalChars * 0.35, 14)
+  // 容器高度随最大字号自适应
+  const maxFontSize = visible.reduce((mx, m) => Math.max(mx, m.fontSize ?? 12), 12)
+  const bannerHeight = maxFontSize + 20  // 上下各留 10px
 
   return (
     <div
       className="overflow-hidden border-b border-neutral-100/80 bg-white/70 backdrop-blur-sm"
-      style={{ height: '32px' }}
+      style={{ height: `${bannerHeight}px` }}
     >
       <div
         className="marquee-track items-center h-full"
@@ -99,8 +102,8 @@ function MarqueeBanner({ items }: { items: MarqueeItem[] }) {
         {doubled.map((item, i) => {
           const inner = (
             <span
-              className="inline-flex items-center gap-2 px-5 text-xs font-medium tracking-wide select-none"
-              style={{ color: item.color }}
+              className="inline-flex items-center gap-2 px-5 font-medium tracking-wide select-none"
+              style={{ color: item.color, fontSize: `${item.fontSize ?? 12}px` }}
             >
               <span className="opacity-30 text-[10px]">◆</span>
               {item.text}

@@ -45,6 +45,7 @@ export interface MarqueeItem {
   id: string
   text: string
   color: string
+  fontSize?: number
   url?: string
   order: number
   visible: boolean

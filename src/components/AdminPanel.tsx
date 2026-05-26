@@ -1069,7 +1069,7 @@ function MarqueeTab({ marquees, customColors, onMarqueesChange }: {
   const [editData, setEditData] = useState<Partial<MarqueeItem>>({})
   const [adding, setAdding] = useState(false)
   const [newItem, setNewItem] = useState<Partial<MarqueeItem>>({
-    text: '', color: '#6366f1', url: '', visible: true, order: sorted.length + 1,
+    text: '', color: '#6366f1', fontSize: 12, url: '', visible: true, order: sorted.length + 1,
   })
 
   async function handleAdd() {
@@ -1077,6 +1077,7 @@ function MarqueeTab({ marquees, customColors, onMarqueesChange }: {
     const data = {
       text: newItem.text ?? '',
       color: newItem.color ?? '#6366f1',
+      fontSize: newItem.fontSize ?? 12,
       url: newItem.url || undefined,
       visible: newItem.visible ?? true,
       order: newItem.order ?? sorted.length + 1,
@@ -1152,6 +1153,7 @@ function MarqueeTab({ marquees, customColors, onMarqueesChange }: {
                     <p className="text-xs text-neutral-400 truncate mt-0.5">{item.url}</p>
                   )}
                 </div>
+                <span className="text-xs text-neutral-300 shrink-0">{item.fontSize ?? 12}px</span>
                 <span className="text-xs text-neutral-300 shrink-0">#{item.order}</span>
                 <div className="flex items-center gap-1">
                   <button
@@ -1208,6 +1210,36 @@ function MarqueeFormFields({ data, onChange, customColors }: {
         customColors={customColors}
         onSaveCustom={() => {}}
       />
+      {/* 字号选择 */}
+      <div className="space-y-1.5">
+        <span className="text-xs font-medium text-neutral-500">文字大小</span>
+        <div className="flex gap-1.5 flex-wrap">
+          {([12, 14, 16, 18, 20, 24] as const).map((size) => {
+            const active = (data.fontSize ?? 12) === size
+            return (
+              <button
+                key={size}
+                type="button"
+                onClick={() => onChange('fontSize', size)}
+                className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-all ${
+                  active
+                    ? 'bg-neutral-900 text-white border-neutral-900'
+                    : 'text-neutral-500 border-neutral-200 hover:border-neutral-400 hover:text-neutral-800'
+                }`}
+              >
+                {size}px
+              </button>
+            )
+          })}
+        </div>
+        {/* 预览 */}
+        <p
+          className="truncate text-neutral-400 leading-tight pt-0.5"
+          style={{ fontSize: `${data.fontSize ?? 12}px`, color: data.color || undefined }}
+        >
+          {data.text || '预览文字'}
+        </p>
+      </div>
       <Field label="排序权重" value={String(data.order ?? 1)} onChange={(v) => onChange('order', Number(v))} type="number" />
       <div className="col-span-2">
         <Field label="跳转链接（可选）" value={data.url ?? ''} onChange={(v) => onChange('url', v)} placeholder="https://..." />
