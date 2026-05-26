@@ -41,6 +41,15 @@ export interface LinkItem {
   visible: boolean;
 }
 
+export interface MarqueeItem {
+  id: string
+  text: string
+  color: string
+  url?: string
+  order: number
+  visible: boolean
+}
+
 export interface SystemSettings {
   siteTitle: string;
   siteSubtitle: string;

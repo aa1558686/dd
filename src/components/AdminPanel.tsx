@@ -9,9 +9,10 @@ import {
   saveCategory, updateCategory, deleteCategory,
   saveLink, updateLink, deleteLink,
   saveAd, updateAd, deleteAd,
+  saveMarquee, updateMarquee, deleteMarquee,
   updateSettings, isFirebaseConfigured,
 } from '../firebase'
-import type { Category, LinkItem, AdItem, SystemSettings } from '../types'
+import type { Category, LinkItem, AdItem, SystemSettings, MarqueeItem } from '../types'
 import { FONTS } from './FontSelector'
 
 // ── 推荐配色方案 ────────────────────────────────────────────
@@ -28,18 +29,20 @@ const PRESET_PALETTES = [
   { name: '森林棕', colors: ['#92400e', '#b45309', '#d97706', '#fef3c7'] },
 ]
 
-type Tab = 'categories' | 'links' | 'ads' | 'colors' | 'settings'
+type Tab = 'categories' | 'links' | 'ads' | 'marquee' | 'colors' | 'settings'
 
 interface AdminPanelProps {
   settings: SystemSettings
   categories: Category[]
   links: LinkItem[]
   ads: AdItem[]
+  marquees: MarqueeItem[]
   onClose: () => void
   onSettingsChange: (s: SystemSettings) => void
   onCategoriesChange: (cats: Category[]) => void
   onLinksChange: (links: LinkItem[]) => void
   onAdsChange: (ads: AdItem[]) => void
+  onMarqueesChange: (items: MarqueeItem[]) => void
 }
 
 // ── 颜色选择器组件 ─────────────────────────────────────────
@@ -157,7 +160,7 @@ function Field({
 }
 
 // ── 主组件 ─────────────────────────────────────────────────
-export function AdminPanel({ settings, categories, links, ads, onClose, onSettingsChange, onCategoriesChange, onLinksChange, onAdsChange }: AdminPanelProps) {
+export function AdminPanel({ settings, categories, links, ads, marquees, onClose, onSettingsChange, onCategoriesChange, onLinksChange, onAdsChange, onMarqueesChange }: AdminPanelProps) {
   const [authenticated, setAuthenticated] = useState(() => sessionStorage.getItem('nav_admin_auth') === '1')
   const [pwInput, setPwInput] = useState('')
   const [pwVisible, setPwVisible] = useState(false)
@@ -307,6 +310,7 @@ export function AdminPanel({ settings, categories, links, ads, onClose, onSettin
             ['categories', '分类管理'],
             ['links', '链接管理'],
             ['ads', '广告位'],
+            ['marquee', '跑马灯'],
             ['colors', '色盘定制'],
             ['settings', '系统设置'],
           ] as [Tab, string][]).map(([t, label]) => (
@@ -334,6 +338,9 @@ export function AdminPanel({ settings, categories, links, ads, onClose, onSettin
           )}
           {tab === 'ads' && (
             <AdsTab ads={ads} customColors={settings.customColors} onAdsChange={onAdsChange} />
+          )}
+          {tab === 'marquee' && (
+            <MarqueeTab marquees={marquees} customColors={settings.customColors} onMarqueesChange={onMarqueesChange} />
           )}
           {tab === 'colors' && (
             <ColorsTab settings={settings} onSettingsChange={onSettingsChange} />
@@ -1047,6 +1054,173 @@ function SettingsTab({ settings, onSettingsChange }: { settings: SystemSettings;
           </p>
         </div>
       )}
+    </div>
+  )
+}
+
+// ── 跑马灯管理 Tab ──────────────────────────────────────────
+function MarqueeTab({ marquees, customColors, onMarqueesChange }: {
+  marquees: MarqueeItem[]
+  customColors: string[]
+  onMarqueesChange: (items: MarqueeItem[]) => void
+}) {
+  const sorted = [...marquees].sort((a, b) => a.order - b.order)
+  const [editId, setEditId] = useState<string | null>(null)
+  const [editData, setEditData] = useState<Partial<MarqueeItem>>({})
+  const [adding, setAdding] = useState(false)
+  const [newItem, setNewItem] = useState<Partial<MarqueeItem>>({
+    text: '', color: '#6366f1', url: '', visible: true, order: sorted.length + 1,
+  })
+
+  async function handleAdd() {
+    if (!newItem.text) return
+    const data = {
+      text: newItem.text ?? '',
+      color: newItem.color ?? '#6366f1',
+      url: newItem.url || undefined,
+      visible: newItem.visible ?? true,
+      order: newItem.order ?? sorted.length + 1,
+    }
+    const id = await saveMarquee(data)
+    onMarqueesChange([...marquees, { ...data, id }])
+    setAdding(false)
+    setNewItem({ text: '', color: '#6366f1', url: '', visible: true, order: sorted.length + 2 })
+  }
+
+  async function saveEdit() {
+    if (!editId) return
+    await updateMarquee(editId, editData)
+    onMarqueesChange(marquees.map((m) => (m.id === editId ? { ...m, ...editData } as MarqueeItem : m)))
+    setEditId(null)
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm('确认删除该条目？')) return
+    await deleteMarquee(id)
+    onMarqueesChange(marquees.filter((m) => m.id !== id))
+  }
+
+  return (
+    <div className="p-6 space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-sm font-semibold text-neutral-700">跑马灯文字 ({marquees.length})</h2>
+          <p className="text-xs text-neutral-400 mt-0.5">彩色滚动公告条，搜索框正下方显示</p>
+        </div>
+        <button
+          onClick={() => { setAdding(true); setEditId(null) }}
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-900 text-white text-xs font-medium rounded-lg hover:bg-neutral-700 transition-colors"
+        >
+          <Plus size={13} /> 新建条目
+        </button>
+      </div>
+
+      {adding && (
+        <ItemForm title="新建跑马灯条目" onCancel={() => setAdding(false)} onSave={handleAdd}>
+          <MarqueeFormFields
+            data={newItem}
+            onChange={(k, v) => setNewItem((p) => ({ ...p, [k]: v }))}
+            customColors={customColors}
+          />
+        </ItemForm>
+      )}
+
+      <div className="space-y-2">
+        {sorted.map((item) => (
+          <div key={item.id} className="border border-neutral-100 rounded-xl overflow-hidden">
+            {editId === item.id ? (
+              <ItemForm title="编辑条目" onCancel={() => setEditId(null)} onSave={saveEdit} compact>
+                <MarqueeFormFields
+                  data={editData}
+                  onChange={(k, v) => setEditData((p) => ({ ...p, [k]: v }))}
+                  customColors={customColors}
+                />
+              </ItemForm>
+            ) : (
+              <div className="flex items-center gap-3 px-4 py-3 bg-white hover:bg-neutral-50 transition-colors">
+                <GripVertical size={14} className="text-neutral-300 shrink-0" />
+                {/* 颜色预览 */}
+                <div
+                  className="w-3 h-3 rounded-full shrink-0 ring-1 ring-neutral-200"
+                  style={{ background: item.color }}
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate" style={{ color: item.color }}>
+                    {item.text}
+                  </p>
+                  {item.url && (
+                    <p className="text-xs text-neutral-400 truncate mt-0.5">{item.url}</p>
+                  )}
+                </div>
+                <span className="text-xs text-neutral-300 shrink-0">#{item.order}</span>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => {
+                      updateMarquee(item.id, { visible: !item.visible })
+                      onMarqueesChange(marquees.map((m) => m.id === item.id ? { ...m, visible: !item.visible } : m))
+                    }}
+                    className={`text-xs px-2 py-1 rounded-md transition-colors ${item.visible ? 'text-emerald-600 bg-emerald-50' : 'text-neutral-400 bg-neutral-50'}`}
+                  >
+                    {item.visible ? '显示' : '隐藏'}
+                  </button>
+                  <button
+                    onClick={() => { setEditId(item.id); setEditData({ ...item }); setAdding(false) }}
+                    className="p-1.5 text-neutral-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                  >
+                    <Edit3 size={14} />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    className="p-1.5 text-neutral-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+        {marquees.length === 0 && !adding && (
+          <div className="text-center py-12 text-neutral-400 text-sm">
+            暂无条目，点击右上角「新建条目」开始添加
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function MarqueeFormFields({ data, onChange, customColors }: {
+  data: Partial<MarqueeItem>
+  onChange: (k: string, v: unknown) => void
+  customColors: string[]
+}) {
+  return (
+    <div className="grid grid-cols-2 gap-4">
+      <div className="col-span-2">
+        <Field label="滚动文字 *" value={data.text ?? ''} onChange={(v) => onChange('text', v)} placeholder="欢迎使用导航门户 🎉" />
+      </div>
+      <ColorInput
+        label="文字颜色"
+        value={data.color ?? '#6366f1'}
+        onChange={(v) => onChange('color', v)}
+        defaultVal="#6366f1"
+        customColors={customColors}
+        onSaveCustom={() => {}}
+      />
+      <Field label="排序权重" value={String(data.order ?? 1)} onChange={(v) => onChange('order', Number(v))} type="number" />
+      <div className="col-span-2">
+        <Field label="跳转链接（可选）" value={data.url ?? ''} onChange={(v) => onChange('url', v)} placeholder="https://..." />
+      </div>
+      <label className="flex items-center gap-2 col-span-2 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={data.visible ?? true}
+          onChange={(e) => onChange('visible', e.target.checked)}
+          className="rounded"
+        />
+        <span className="text-sm text-neutral-600">显示此条目</span>
+      </label>
     </div>
   )
 }

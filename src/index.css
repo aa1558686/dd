@@ -42,6 +42,20 @@ input[type='color']::-webkit-color-swatch {
   border-radius: 4px;
 }
 
+/* 彩字跑马灯动画 */
+@keyframes nav-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: nav-marquee var(--marquee-duration, 24s) linear infinite;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
 /* 搜索框过渡动画 */
 .search-input-enter {
   opacity: 0;

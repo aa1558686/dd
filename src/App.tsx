@@ -5,7 +5,7 @@ import { LucideIcon } from './components/LucideIcon'
 import { FontSelector } from './components/FontSelector'
 import { AdminPanel } from './components/AdminPanel'
 import { subscribeAll, updateSettings } from './firebase'
-import type { Category, LinkItem, AdItem, SystemSettings } from './types'
+import type { Category, LinkItem, AdItem, SystemSettings, MarqueeItem } from './types'
 
 // ── 默认数据（Firebase 为空时显示） ─────────────────────────
 const DEFAULT_SETTINGS: SystemSettings = {
@@ -47,6 +47,14 @@ const SAMPLE_LINKS: LinkItem[] = [
   { id: 'l20', categoryId: 'c5', title: 'Feishu', subtitle: '飞书协作办公平台', url: 'https://feishu.cn', order: 4, visible: true },
 ]
 
+const SAMPLE_MARQUEES: MarqueeItem[] = [
+  { id: 'm1', text: '欢迎使用导航门户 🎉', color: '#6366f1', order: 1, visible: true },
+  { id: 'm2', text: '精选优质网站，提升工作效率', color: '#059669', order: 2, visible: true },
+  { id: 'm3', text: '发现更多好站，每日更新', color: '#f59e0b', order: 3, visible: true },
+  { id: 'm4', text: '点击左侧管理后台，自由定制您的导航', color: '#e11d48', order: 4, visible: true },
+  { id: 'm5', text: '支持云端同步 · 多端一致', color: '#0891b2', order: 5, visible: true },
+]
+
 const SAMPLE_ADS: AdItem[] = [
   {
     id: 'a1', title: '精选工具集', subtitle: '汇聚全网高质量效率工具，一站直达',
@@ -64,6 +72,58 @@ const SAMPLE_ADS: AdItem[] = [
     url: '#', size: 'medium', order: 3, visible: true,
   },
 ]
+
+// ── 彩字跑马灯 ───────────────────────────────────────────────
+function MarqueeBanner({ items }: { items: MarqueeItem[] }) {
+  const visible = useMemo(
+    () => items.filter((m) => m.visible).sort((a, b) => a.order - b.order),
+    [items],
+  )
+  if (visible.length === 0) return null
+
+  // 复制两份实现无缝循环
+  const doubled = [...visible, ...visible]
+  // 根据文字总量动态调整速度（约 40px/s）
+  const totalChars = visible.reduce((s, m) => s + m.text.length, 0)
+  const duration = Math.max(totalChars * 0.35, 14)
+
+  return (
+    <div
+      className="overflow-hidden border-b border-neutral-100/80 bg-white/70 backdrop-blur-sm"
+      style={{ height: '32px' }}
+    >
+      <div
+        className="marquee-track items-center h-full"
+        style={{ '--marquee-duration': `${duration}s` } as React.CSSProperties}
+      >
+        {doubled.map((item, i) => {
+          const inner = (
+            <span
+              className="inline-flex items-center gap-2 px-5 text-xs font-medium tracking-wide select-none"
+              style={{ color: item.color }}
+            >
+              <span className="opacity-30 text-[10px]">◆</span>
+              {item.text}
+            </span>
+          )
+          return item.url ? (
+            <a
+              key={i}
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:opacity-70 transition-opacity"
+            >
+              {inner}
+            </a>
+          ) : (
+            <span key={i}>{inner}</span>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
 
 // ── 广告卡片 ─────────────────────────────────────────────────
 function AdCard({ ad }: { ad: AdItem }) {
@@ -181,6 +241,7 @@ export default function App() {
   const [categories, setCategories] = useState<Category[]>(SAMPLE_CATEGORIES)
   const [links, setLinks] = useState<LinkItem[]>(SAMPLE_LINKS)
   const [ads, setAds] = useState<AdItem[]>(SAMPLE_ADS)
+  const [marquees, setMarquees] = useState<MarqueeItem[]>(SAMPLE_MARQUEES)
   const [settings, setSettings] = useState<SystemSettings>(DEFAULT_SETTINGS)
   const [query, setQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
@@ -195,6 +256,7 @@ export default function App() {
       setLinks,
       setAds,
       setSettings,
+      setMarquees,
       onEmpty: () => {
         setCategories(SAMPLE_CATEGORIES)
         setLinks(SAMPLE_LINKS)
@@ -326,8 +388,9 @@ export default function App() {
 
       {/* ── 主画布 ────────────────────────────────────────────── */}
       <main ref={mainRef} className="flex-1 overflow-y-auto overflow-x-hidden">
-        {/* 悬浮搜索栏 */}
-        <div className="sticky top-0 z-30 px-4 md:px-8 py-3 bg-neutral-50/90 backdrop-blur-md border-b border-neutral-100/80">
+        {/* 悬浮搜索栏 + 跑马灯（整体吸顶） */}
+        <div className="sticky top-0 z-30 bg-neutral-50/90 backdrop-blur-md border-b border-neutral-100/80">
+          <div className="px-4 md:px-8 py-3">
           <div className="max-w-2xl mx-auto flex items-center gap-3 px-4 py-2.5 bg-white/70 backdrop-blur-md rounded-2xl border border-neutral-200/70 shadow-sm shadow-neutral-200/30">
             <Search size={16} className="text-neutral-400 shrink-0" />
             <input
@@ -350,6 +413,9 @@ export default function App() {
               <Menu size={16} />
             </button>
           </div>
+          </div>
+          {/* 彩字跑马灯 */}
+          <MarqueeBanner items={marquees} />
         </div>
 
         <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-6">
@@ -440,11 +506,13 @@ export default function App() {
             categories={categories}
             links={links}
             ads={ads}
+            marquees={marquees}
             onClose={() => setShowAdmin(false)}
             onSettingsChange={handleSettingsChange}
             onCategoriesChange={setCategories}
             onLinksChange={setLinks}
             onAdsChange={setAds}
+            onMarqueesChange={setMarquees}
           />
         )}
       </AnimatePresence>

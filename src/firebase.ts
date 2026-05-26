@@ -10,7 +10,7 @@ import {
   setDoc,
   type Firestore,
 } from 'firebase/firestore'
-import type { Category, LinkItem, AdItem, SystemSettings } from './types'
+import type { Category, LinkItem, AdItem, SystemSettings, MarqueeItem } from './types'
 
 // ⚠️ 请将下方占位符替换为您的 Firebase 项目配置
 // 获取方式：Firebase 控制台 → 项目设置 → 您的应用 → SDK 设置和配置
@@ -62,6 +62,7 @@ type SubscribeCallbacks = {
   setLinks: (v: LinkItem[]) => void
   setAds: (v: AdItem[]) => void
   setSettings: (v: SystemSettings) => void
+  setMarquees: (v: MarqueeItem[]) => void
   onEmpty?: () => void
 }
 
@@ -97,6 +98,13 @@ export function subscribeAll(callbacks: SubscribeCallbacks): () => void {
       }),
     )
 
+    unsubs.push(
+      onSnapshot(collection(db, 'marquees'), (snap) => {
+        const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() } as MarqueeItem))
+        callbacks.setMarquees(docs)
+      }),
+    )
+
     return () => unsubs.forEach((u) => u())
   } else {
     // localStorage 降级
@@ -105,11 +113,14 @@ export function subscribeAll(callbacks: SubscribeCallbacks): () => void {
     const ads = LS.get<AdItem[]>('nav_ads', [])
     const settings = LS.get<SystemSettings | null>('nav_settings', null)
 
+    const marquees = LS.get<MarqueeItem[]>('nav_marquees', [])
+
     if (cats.length > 0) callbacks.setCategories(cats)
     else callbacks.onEmpty?.()
     if (links.length > 0) callbacks.setLinks(links)
     if (ads.length > 0) callbacks.setAds(ads)
     if (settings) callbacks.setSettings(settings)
+    if (marquees.length > 0) callbacks.setMarquees(marquees)
 
     return () => {}
   }
@@ -203,6 +214,36 @@ export async function deleteAd(id: string): Promise<void> {
   }
   const ads = LS.get<AdItem[]>('nav_ads', [])
   LS.set('nav_ads', ads.filter((a) => a.id !== id))
+}
+
+// ── Marquees ─────────────────────────────────────────────────
+export async function saveMarquee(item: Omit<MarqueeItem, 'id'>): Promise<string> {
+  if (db) {
+    const ref = await addDoc(collection(db, 'marquees'), item)
+    return ref.id
+  }
+  const id = `mq_${Date.now()}`
+  const list = LS.get<MarqueeItem[]>('nav_marquees', [])
+  LS.set('nav_marquees', [...list, { ...item, id }])
+  return id
+}
+
+export async function updateMarquee(id: string, data: Partial<MarqueeItem>): Promise<void> {
+  if (db) {
+    await updateDoc(doc(db, 'marquees', id), data as Record<string, unknown>)
+    return
+  }
+  const list = LS.get<MarqueeItem[]>('nav_marquees', [])
+  LS.set('nav_marquees', list.map((m) => (m.id === id ? { ...m, ...data } : m)))
+}
+
+export async function deleteMarquee(id: string): Promise<void> {
+  if (db) {
+    await deleteDoc(doc(db, 'marquees', id))
+    return
+  }
+  const list = LS.get<MarqueeItem[]>('nav_marquees', [])
+  LS.set('nav_marquees', list.filter((m) => m.id !== id))
 }
 
 // ── Settings ─────────────────────────────────────────────────
