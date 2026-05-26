@@ -257,3 +257,24 @@ export async function updateSettings(data: Partial<SystemSettings>): Promise<voi
 }
 
 export { isConfigured as isFirebaseConfigured }
+
+// ── 初始化本地存储（样本数据首次写入） ──────────────────────
+export function initLocalStorage(data: {
+  categories: Category[]
+  links: LinkItem[]
+  ads: AdItem[]
+  marquees: MarqueeItem[]
+  settings: SystemSettings
+}) {
+  if (db) return // Firebase 模式无需处理
+  if (LS.get<Category[]>('nav_categories', []).length === 0)
+    LS.set('nav_categories', data.categories)
+  if (LS.get<LinkItem[]>('nav_links', []).length === 0)
+    LS.set('nav_links', data.links)
+  if (LS.get<AdItem[]>('nav_ads', []).length === 0)
+    LS.set('nav_ads', data.ads)
+  if (LS.get<MarqueeItem[]>('nav_marquees', []).length === 0)
+    LS.set('nav_marquees', data.marquees)
+  if (!LS.get<SystemSettings | null>('nav_settings', null))
+    LS.set('nav_settings', data.settings)
+}

@@ -625,6 +625,7 @@ function LinksTab({ links, categories, customColors, onLinksChange, onSaveCustom
                   onChange={(k, v) => setEditData((p) => ({ ...p, [k]: v }))}
                   categories={categories}
                   customColors={customColors}
+                  onSaveCustomColor={onSaveCustomColor}
                 />
               </ItemForm>
             ) : (
@@ -778,8 +779,8 @@ function AdsTab({ ads, customColors, onAdsChange, onSaveCustomColor }: { ads: Ad
                 <AdFormFields
                   data={editData}
                   onChange={(k, v) => setEditData((p) => ({ ...p, [k]: v }))}
-                  customColors={localCustomColors}
-                  onSaveCustomColor={addCustomColor}
+                  customColors={customColors}
+                  onSaveCustomColor={onSaveCustomColor}
                 />
               </ItemForm>
             ) : (
@@ -1140,6 +1141,7 @@ function MarqueeTab({ marquees, customColors, onMarqueesChange, onSaveCustomColo
                   data={editData}
                   onChange={(k, v) => setEditData((p) => ({ ...p, [k]: v }))}
                   customColors={customColors}
+                  onSaveCustomColor={onSaveCustomColor}
                 />
               </ItemForm>
             ) : (

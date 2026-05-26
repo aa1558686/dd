@@ -4,7 +4,7 @@ import { Search, Lock, Menu, X, ExternalLink } from 'lucide-react'
 import { LucideIcon } from './components/LucideIcon'
 import { FontSelector } from './components/FontSelector'
 import { AdminPanel } from './components/AdminPanel'
-import { subscribeAll, updateSettings } from './firebase'
+import { subscribeAll, updateSettings, initLocalStorage } from './firebase'
 import type { Category, LinkItem, AdItem, SystemSettings, MarqueeItem } from './types'
 
 // ── 默认数据（Firebase 为空时显示） ─────────────────────────
@@ -264,6 +264,14 @@ export default function App() {
         setCategories(SAMPLE_CATEGORIES)
         setLinks(SAMPLE_LINKS)
         setAds(SAMPLE_ADS)
+        // 首次加载时把样本数据写入 localStorage，确保后台编辑可持久化
+        initLocalStorage({
+          categories: SAMPLE_CATEGORIES,
+          links: SAMPLE_LINKS,
+          ads: SAMPLE_ADS,
+          marquees: SAMPLE_MARQUEES,
+          settings: DEFAULT_SETTINGS,
+        })
       },
     })
   }, [])
