@@ -1,0 +1,10 @@
+# 所有文本文件统一用 LF 存储
+* text=auto eol=lf
+
+# 二进制文件不转换
+*.png binary
+*.jpg binary
+*.ico binary
+*.webp binary
+*.woff2 binary
+*.woff binary

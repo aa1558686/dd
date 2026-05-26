@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-serif: 'Noto Serif SC', 'Georgia', serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* 隐藏滚动条但保留滚动功能 */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* 原生颜色选择器样式优化 */
+input[type='color'] {
+  -webkit-appearance: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+input[type='color']::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+input[type='color']::-webkit-color-swatch {
+  border: none;
+  border-radius: 4px;
+}
+
+/* 搜索框过渡动画 */
+.search-input-enter {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+.search-input-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 200ms ease;
+}
