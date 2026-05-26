@@ -184,6 +184,13 @@ export function AdminPanel({ settings, categories, links, ads, marquees, onClose
     setPwInput('')
   }
 
+  function handleSaveCustomColor(color: string) {
+    if (!color || settings.customColors.includes(color)) return
+    const updated = { ...settings, customColors: [...settings.customColors, color] }
+    onSettingsChange(updated)
+    updateSettings({ customColors: updated.customColors })
+  }
+
   // ── 认证界面 ─────────────────────────────────────────────
   if (!authenticated) {
     return (
@@ -331,16 +338,16 @@ export function AdminPanel({ settings, categories, links, ads, marquees, onClose
         {/* Tab content */}
         <div className="flex-1 overflow-y-auto">
           {tab === 'categories' && (
-            <CategoriesTab categories={categories} customColors={settings.customColors} onCategoriesChange={onCategoriesChange} />
+            <CategoriesTab categories={categories} customColors={settings.customColors} onCategoriesChange={onCategoriesChange} onSaveCustomColor={handleSaveCustomColor} />
           )}
           {tab === 'links' && (
-            <LinksTab links={links} categories={categories} customColors={settings.customColors} onLinksChange={onLinksChange} />
+            <LinksTab links={links} categories={categories} customColors={settings.customColors} onLinksChange={onLinksChange} onSaveCustomColor={handleSaveCustomColor} />
           )}
           {tab === 'ads' && (
-            <AdsTab ads={ads} customColors={settings.customColors} onAdsChange={onAdsChange} />
+            <AdsTab ads={ads} customColors={settings.customColors} onAdsChange={onAdsChange} onSaveCustomColor={handleSaveCustomColor} />
           )}
           {tab === 'marquee' && (
-            <MarqueeTab marquees={marquees} customColors={settings.customColors} onMarqueesChange={onMarqueesChange} />
+            <MarqueeTab marquees={marquees} customColors={settings.customColors} onMarqueesChange={onMarqueesChange} onSaveCustomColor={handleSaveCustomColor} />
           )}
           {tab === 'colors' && (
             <ColorsTab settings={settings} onSettingsChange={onSettingsChange} />
@@ -355,7 +362,7 @@ export function AdminPanel({ settings, categories, links, ads, marquees, onClose
 }
 
 // ── 分类管理 Tab ────────────────────────────────────────────
-function CategoriesTab({ categories, customColors, onCategoriesChange }: { categories: Category[]; customColors: string[]; onCategoriesChange: (cats: Category[]) => void }) {
+function CategoriesTab({ categories, customColors, onCategoriesChange, onSaveCustomColor }: { categories: Category[]; customColors: string[]; onCategoriesChange: (cats: Category[]) => void; onSaveCustomColor: (c: string) => void }) {
   const sorted = [...categories].sort((a, b) => a.order - b.order)
   const [editId, setEditId] = useState<string | null>(null)
   const [editData, setEditData] = useState<Partial<Category>>({})
@@ -419,6 +426,7 @@ function CategoriesTab({ categories, customColors, onCategoriesChange }: { categ
             data={newItem}
             onChange={(k, v) => setNewItem((p) => ({ ...p, [k]: v }))}
             customColors={customColors}
+            onSaveCustomColor={onSaveCustomColor}
             iconPickerOpen={iconPickerFor === 'new'}
             onToggleIconPicker={() => setIconPickerFor(iconPickerFor === 'new' ? null : 'new')}
           />
@@ -434,6 +442,7 @@ function CategoriesTab({ categories, customColors, onCategoriesChange }: { categ
                   data={editData}
                   onChange={(k, v) => setEditData((p) => ({ ...p, [k]: v }))}
                   customColors={customColors}
+                  onSaveCustomColor={onSaveCustomColor}
                   iconPickerOpen={iconPickerFor === cat.id}
                   onToggleIconPicker={() => setIconPickerFor(iconPickerFor === cat.id ? null : cat.id)}
                 />
@@ -471,10 +480,11 @@ function CategoriesTab({ categories, customColors, onCategoriesChange }: { categ
   )
 }
 
-function CatFormFields({ data, onChange, customColors, iconPickerOpen, onToggleIconPicker }: {
+function CatFormFields({ data, onChange, customColors, onSaveCustomColor, iconPickerOpen, onToggleIconPicker }: {
   data: Partial<Category>
   onChange: (k: string, v: unknown) => void
   customColors: string[]
+  onSaveCustomColor: (c: string) => void
   iconPickerOpen: boolean
   onToggleIconPicker: () => void
 }) {
@@ -482,6 +492,7 @@ function CatFormFields({ data, onChange, customColors, iconPickerOpen, onToggleI
     <div className="grid grid-cols-2 gap-4">
       <Field label="分类名称" value={data.name ?? ''} onChange={(v) => onChange('name', v)} placeholder="例：常用工具" />
       <Field label="排序权重" value={String(data.order ?? 1)} onChange={(v) => onChange('order', Number(v))} type="number" />
+      <ColorInput label="分类颜色" value={data.color ?? ''} onChange={(v) => onChange('color', v)} customColors={customColors} onSaveCustom={onSaveCustomColor} />
       <div className="space-y-1 col-span-2">
         <label className="text-xs font-medium text-neutral-500">图标</label>
         <button
@@ -530,7 +541,7 @@ function faviconUrl(url: string): string {
 }
 
 // ── 链接管理 Tab ────────────────────────────────────────────
-function LinksTab({ links, categories, customColors, onLinksChange }: { links: LinkItem[]; categories: Category[]; customColors: string[]; onLinksChange: (links: LinkItem[]) => void }) {
+function LinksTab({ links, categories, customColors, onLinksChange, onSaveCustomColor }: { links: LinkItem[]; categories: Category[]; customColors: string[]; onLinksChange: (links: LinkItem[]) => void; onSaveCustomColor: (c: string) => void }) {
   const [filterCat, setFilterCat] = useState<string>('all')
   const [editId, setEditId] = useState<string | null>(null)
   const [editData, setEditData] = useState<Partial<LinkItem>>({})
@@ -599,6 +610,7 @@ function LinksTab({ links, categories, customColors, onLinksChange }: { links: L
             onChange={(k, v) => setNewItem((p) => ({ ...p, [k]: v }))}
             categories={categories}
             customColors={customColors}
+            onSaveCustomColor={onSaveCustomColor}
           />
         </ItemForm>
       )}
@@ -653,18 +665,19 @@ function LinksTab({ links, categories, customColors, onLinksChange }: { links: L
   )
 }
 
-function LinkFormFields({ data, onChange, categories, customColors }: {
+function LinkFormFields({ data, onChange, categories, customColors, onSaveCustomColor }: {
   data: Partial<LinkItem>
   onChange: (k: string, v: unknown) => void
   categories: Category[]
   customColors: string[]
+  onSaveCustomColor: (c: string) => void
 }) {
   return (
     <div className="grid grid-cols-2 gap-4">
       <Field label="链接标题 *" value={data.title ?? ''} onChange={(v) => onChange('title', v)} placeholder="网站名称" />
       <Field label="URL *" value={data.url ?? ''} onChange={(v) => onChange('url', v)} placeholder="https://..." />
       <Field label="副标题" value={data.subtitle ?? ''} onChange={(v) => onChange('subtitle', v)} placeholder="简短描述" />
-      <ColorInput label="副标题颜色" value={data.subtitleColor ?? ''} onChange={(v) => onChange('subtitleColor', v)} customColors={customColors} onSaveCustom={() => {}} />
+      <ColorInput label="副标题颜色" value={data.subtitleColor ?? ''} onChange={(v) => onChange('subtitleColor', v)} customColors={customColors} onSaveCustom={onSaveCustomColor} />
       <Field label="自定义图标 URL" value={data.iconUrl ?? ''} onChange={(v) => onChange('iconUrl', v)} placeholder="https://..." />
       <div className="space-y-1">
         <label className="text-xs font-medium text-neutral-500">所属分类</label>
@@ -677,16 +690,16 @@ function LinkFormFields({ data, onChange, categories, customColors }: {
         </select>
       </div>
       <Field label="排序权重" value={String(data.order ?? 1)} onChange={(v) => onChange('order', Number(v))} type="number" />
-      <ColorInput label="卡片背景色" value={data.bgColor ?? ''} onChange={(v) => onChange('bgColor', v)} customColors={customColors} onSaveCustom={() => {}} />
-      <ColorInput label="文字颜色" value={data.textColor ?? ''} onChange={(v) => onChange('textColor', v)} customColors={customColors} onSaveCustom={() => {}} />
+      <ColorInput label="卡片背景色" value={data.bgColor ?? ''} onChange={(v) => onChange('bgColor', v)} customColors={customColors} onSaveCustom={onSaveCustomColor} />
+      <ColorInput label="文字颜色" value={data.textColor ?? ''} onChange={(v) => onChange('textColor', v)} customColors={customColors} onSaveCustom={onSaveCustomColor} />
       {/* 徽章区域 */}
       <div className="col-span-2 pt-1 border-t border-neutral-100">
         <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">徽章设置（可选）</p>
         <div className="grid grid-cols-2 gap-4">
           <Field label="徽章文字" value={data.badgeText ?? ''} onChange={(v) => onChange('badgeText', v)} placeholder="如：NEW · HOT · 推荐" />
           <div />
-          <ColorInput label="徽章文字色" value={data.badgeColor ?? ''} onChange={(v) => onChange('badgeColor', v)} customColors={customColors} onSaveCustom={() => {}} />
-          <ColorInput label="徽章背景色" value={data.badgeBgColor ?? ''} onChange={(v) => onChange('badgeBgColor', v)} customColors={customColors} onSaveCustom={() => {}} />
+          <ColorInput label="徽章文字色" value={data.badgeColor ?? ''} onChange={(v) => onChange('badgeColor', v)} customColors={customColors} onSaveCustom={onSaveCustomColor} />
+          <ColorInput label="徽章背景色" value={data.badgeBgColor ?? ''} onChange={(v) => onChange('badgeBgColor', v)} customColors={customColors} onSaveCustom={onSaveCustomColor} />
         </div>
       </div>
       <label className="flex items-center gap-2 col-span-2 cursor-pointer">
@@ -698,22 +711,12 @@ function LinkFormFields({ data, onChange, categories, customColors }: {
 }
 
 // ── 广告位管理 Tab ──────────────────────────────────────────
-function AdsTab({ ads, customColors: propCustomColors, onAdsChange }: { ads: AdItem[]; customColors: string[]; onAdsChange: (ads: AdItem[]) => void }) {
+function AdsTab({ ads, customColors, onAdsChange, onSaveCustomColor }: { ads: AdItem[]; customColors: string[]; onAdsChange: (ads: AdItem[]) => void; onSaveCustomColor: (c: string) => void }) {
   const sorted = [...ads].sort((a, b) => a.order - b.order)
   const [editId, setEditId] = useState<string | null>(null)
   const [editData, setEditData] = useState<Partial<AdItem>>({})
   const [adding, setAdding] = useState(false)
   const [newItem, setNewItem] = useState<Partial<AdItem>>({ title: '', url: '', size: 'medium', visible: true, order: sorted.length + 1 })
-  const [localCustomColors, setLocalCustomColors] = useState<string[]>(propCustomColors)
-
-  useEffect(() => {
-    setLocalCustomColors(propCustomColors)
-  }, [propCustomColors])
-
-  function addCustomColor(c: string) {
-    if (!c || localCustomColors.includes(c)) return
-    setLocalCustomColors((prev) => [...prev, c])
-  }
 
   async function saveEdit() {
     if (!editId) return
@@ -761,8 +764,8 @@ function AdsTab({ ads, customColors: propCustomColors, onAdsChange }: { ads: AdI
           <AdFormFields
             data={newItem}
             onChange={(k, v) => setNewItem((p) => ({ ...p, [k]: v }))}
-            customColors={localCustomColors}
-            onSaveCustomColor={addCustomColor}
+            customColors={customColors}
+            onSaveCustomColor={onSaveCustomColor}
           />
         </ItemForm>
       )}
@@ -1059,10 +1062,11 @@ function SettingsTab({ settings, onSettingsChange }: { settings: SystemSettings;
 }
 
 // ── 跑马灯管理 Tab ──────────────────────────────────────────
-function MarqueeTab({ marquees, customColors, onMarqueesChange }: {
+function MarqueeTab({ marquees, customColors, onMarqueesChange, onSaveCustomColor }: {
   marquees: MarqueeItem[]
   customColors: string[]
   onMarqueesChange: (items: MarqueeItem[]) => void
+  onSaveCustomColor: (c: string) => void
 }) {
   const sorted = [...marquees].sort((a, b) => a.order - b.order)
   const [editId, setEditId] = useState<string | null>(null)
@@ -1122,6 +1126,7 @@ function MarqueeTab({ marquees, customColors, onMarqueesChange }: {
             data={newItem}
             onChange={(k, v) => setNewItem((p) => ({ ...p, [k]: v }))}
             customColors={customColors}
+            onSaveCustomColor={onSaveCustomColor}
           />
         </ItemForm>
       )}
@@ -1192,10 +1197,11 @@ function MarqueeTab({ marquees, customColors, onMarqueesChange }: {
   )
 }
 
-function MarqueeFormFields({ data, onChange, customColors }: {
+function MarqueeFormFields({ data, onChange, customColors, onSaveCustomColor }: {
   data: Partial<MarqueeItem>
   onChange: (k: string, v: unknown) => void
   customColors: string[]
+  onSaveCustomColor: (c: string) => void
 }) {
   return (
     <div className="grid grid-cols-2 gap-4">
@@ -1208,7 +1214,7 @@ function MarqueeFormFields({ data, onChange, customColors }: {
         onChange={(v) => onChange('color', v)}
         defaultVal="#6366f1"
         customColors={customColors}
-        onSaveCustom={() => {}}
+        onSaveCustom={onSaveCustomColor}
       />
       {/* 字号选择 */}
       <div className="space-y-1.5">

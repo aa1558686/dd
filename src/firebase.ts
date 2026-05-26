@@ -140,7 +140,7 @@ export async function saveCategory(cat: Omit<Category, 'id'>): Promise<string> {
 
 export async function updateCategory(id: string, data: Partial<Category>): Promise<void> {
   if (db) {
-    await updateDoc(doc(db, 'categories', id), data as Record<string, unknown>)
+    await updateDoc(doc(db, 'categories', id), data as any)
     return
   }
   const cats = LS.get<Category[]>('nav_categories', [])
@@ -170,7 +170,7 @@ export async function saveLink(link: Omit<LinkItem, 'id'>): Promise<string> {
 
 export async function updateLink(id: string, data: Partial<LinkItem>): Promise<void> {
   if (db) {
-    await updateDoc(doc(db, 'links', id), data as Record<string, unknown>)
+    await updateDoc(doc(db, 'links', id), data as any)
     return
   }
   const links = LS.get<LinkItem[]>('nav_links', [])
@@ -200,7 +200,7 @@ export async function saveAd(ad: Omit<AdItem, 'id'>): Promise<string> {
 
 export async function updateAd(id: string, data: Partial<AdItem>): Promise<void> {
   if (db) {
-    await updateDoc(doc(db, 'ads', id), data as Record<string, unknown>)
+    await updateDoc(doc(db, 'ads', id), data as any)
     return
   }
   const ads = LS.get<AdItem[]>('nav_ads', [])
@@ -230,7 +230,7 @@ export async function saveMarquee(item: Omit<MarqueeItem, 'id'>): Promise<string
 
 export async function updateMarquee(id: string, data: Partial<MarqueeItem>): Promise<void> {
   if (db) {
-    await updateDoc(doc(db, 'marquees', id), data as Record<string, unknown>)
+    await updateDoc(doc(db, 'marquees', id), data as any)
     return
   }
   const list = LS.get<MarqueeItem[]>('nav_marquees', [])

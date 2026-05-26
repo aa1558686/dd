@@ -13,7 +13,7 @@ interface LucideIconProps {
 type IconProps = { size?: number; className?: string; color?: string; strokeWidth?: number }
 
 export function LucideIcon({ name, size = 20, className, color, strokeWidth }: LucideIconProps) {
-  const IconComponent = (LucideIcons as Record<string, ComponentType<IconProps>>)[name]
+  const IconComponent = (LucideIcons as unknown as Record<string, ComponentType<IconProps>>)[name]
 
   if (!IconComponent) {
     return <Link size={size} className={className} color={color} strokeWidth={strokeWidth} />
