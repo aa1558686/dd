@@ -689,10 +689,10 @@ function LinkFormFields({ data, onChange, categories, customColors }: {
           <ColorInput label="徽章背景色" value={data.badgeBgColor ?? ''} onChange={(v) => onChange('badgeBgColor', v)} customColors={customColors} onSaveCustom={() => {}} />
         </div>
       </div>
-      <div className="flex items-center gap-2 col-span-2">
+      <label className="flex items-center gap-2 col-span-2 cursor-pointer">
         <input type="checkbox" checked={data.visible ?? true} onChange={(e) => onChange('visible', e.target.checked)} className="rounded" />
         <span className="text-sm text-neutral-600">显示此链接</span>
-      </div>
+      </label>
     </div>
   )
 }
@@ -860,10 +860,10 @@ function AdFormFields({ data, onChange, customColors, onSaveCustomColor }: {
         <ColorInput label="徽章文字色" value={data.badgeColor ?? ''} onChange={(v) => onChange('badgeColor', v)} customColors={customColors} onSaveCustom={onSaveCustomColor} />
         <ColorInput label="徽章背景色" value={data.badgeBgColor ?? ''} onChange={(v) => onChange('badgeBgColor', v)} customColors={customColors} onSaveCustom={onSaveCustomColor} />
       </div>
-      <div className="flex items-center gap-2 col-span-2">
+      <label className="flex items-center gap-2 col-span-2 cursor-pointer">
         <input type="checkbox" checked={data.visible ?? true} onChange={(e) => onChange('visible', e.target.checked)} className="rounded" />
         <span className="text-sm text-neutral-600">显示此广告位</span>
-      </div>
+      </label>
     </div>
   )
 }
@@ -965,11 +965,11 @@ function ColorsTab({ settings, onSettingsChange }: { settings: SystemSettings; o
 function SettingsTab({ settings, onSettingsChange }: { settings: SystemSettings; onSettingsChange: (s: SystemSettings) => void }) {
   const [draft, setDraft] = useState<SystemSettings>({ ...settings })
   const [pwVisible, setPwVisible] = useState(false)
+  const [saved, setSaved] = useState(false)
 
   useEffect(() => {
     setDraft({ ...settings })
   }, [settings])
-  const [saved, setSaved] = useState(false)
 
   function update(k: keyof SystemSettings, v: unknown) {
     setDraft((p) => ({ ...p, [k]: v }))

@@ -298,7 +298,7 @@ export default function App() {
     setTimeout(() => {
       const el = sectionRefs.current[catId]
       if (el && mainRef.current) {
-        const top = el.offsetTop - 80
+        const top = el.offsetTop - 96
         mainRef.current.scrollTo({ top, behavior: 'smooth' })
       }
     }, 50)
