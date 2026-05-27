@@ -223,16 +223,16 @@ function LinkCard({ link }: { link: LinkItem }) {
         </div>
       )}
       <div className="flex-1 min-w-0">
-        <div className="flex items-start gap-1.5 flex-wrap">
+        <div className="flex items-center gap-1.5">
           <p
-            className="text-sm font-medium leading-snug"
+            className="text-sm font-medium truncate"
             style={link.textColor ? { color: link.textColor } : { color: '#171717' }}
           >
             {link.title}
           </p>
           {link.badgeText && (
             <span
-              className="shrink-0 text-xs px-1.5 py-0.5 rounded-full font-medium leading-none mt-0.5"
+              className="shrink-0 text-xs px-1.5 py-0.5 rounded-full font-medium leading-none"
               style={{
                 color: link.badgeColor || '#fff',
                 background: link.badgeBgColor || '#2563eb',
