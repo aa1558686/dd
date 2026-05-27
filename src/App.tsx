@@ -205,7 +205,7 @@ function LinkCard({ link }: { link: LinkItem }) {
       rel="noopener noreferrer"
       whileHover={{ scale: 1.03, y: -2 }}
       whileTap={{ scale: 0.97 }}
-      className="flex items-center gap-3 p-3 rounded-xl border border-neutral-100 hover:border-neutral-200 hover:shadow-sm transition-all group cursor-pointer"
+      className="flex items-center gap-2.5 p-2.5 rounded-xl border border-neutral-100 hover:border-neutral-200 hover:shadow-sm transition-all group cursor-pointer"
       style={link.bgColor ? { background: link.bgColor } : { background: '#fff' }}
     >
       {showFavicon ? (
@@ -224,7 +224,7 @@ function LinkCard({ link }: { link: LinkItem }) {
         </div>
       )}
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1">
           <p
             className="text-sm font-medium truncate"
             style={link.textColor ? { color: link.textColor } : { color: '#171717' }}
@@ -233,7 +233,7 @@ function LinkCard({ link }: { link: LinkItem }) {
           </p>
           {link.badgeText && (
             <span
-              className="shrink-0 text-xs px-1.5 py-0.5 rounded-full font-medium leading-none"
+              className="shrink-0 text-[10px] px-1.5 py-0.5 rounded-full font-medium leading-none"
               style={{
                 color: link.badgeColor || '#fff',
                 background: link.badgeBgColor || '#2563eb',
@@ -484,7 +484,7 @@ export default function App() {
                   <p className="text-neutral-300 text-xs mt-1">试试其他关键词？</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-2.5">
                   {[...filteredLinks].sort((a, b) => a.order - b.order).map((link) => (
                     <LinkCard key={link.id} link={link} />
                   ))}
@@ -514,7 +514,7 @@ export default function App() {
                     <h2 className="text-sm font-semibold text-neutral-700">{cat.name}</h2>
                     <span className="text-xs text-neutral-300 ml-1">{catLinks.length}</span>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                  <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-2.5">
                     {catLinks.map((link) => (
                       <LinkCard key={link.id} link={link} />
                     ))}
