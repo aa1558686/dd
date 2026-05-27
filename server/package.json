@@ -1,0 +1,12 @@
+{
+  "name": "nav-portal-api",
+  "version": "1.0.0",
+  "description": "导航门户数据 API 服务",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
