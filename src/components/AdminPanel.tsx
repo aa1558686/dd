@@ -1303,16 +1303,16 @@ function ItemForm({ title, children, onCancel, onSave, compact }: {
       {/* 表单内容 */}
       <div className="p-3">{children}</div>
       {/* 底部：取消 + 保存，用 inline style 确保旧版浏览器也能并排显示 */}
-      <div style={{ display: 'flex', gap: '10px', padding: '0 12px 12px' }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', padding: '0 12px 12px' }}>
         <button
           onClick={onCancel}
-          style={{ flex: 1, padding: '10px 0', background: '#f5f5f5', color: '#404040', border: 'none', borderRadius: '10px', fontSize: '14px', fontWeight: 500, cursor: 'pointer' }}
+          style={{ padding: '7px 18px', background: '#f5f5f5', color: '#404040', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 500, cursor: 'pointer' }}
         >
           取消
         </button>
         <button
           onClick={onSave}
-          style={{ flex: 1, padding: '10px 0', background: '#171717', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '14px', fontWeight: 500, cursor: 'pointer' }}
+          style={{ padding: '7px 18px', background: '#171717', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 500, cursor: 'pointer' }}
         >
           ✓ 保存
         </button>
