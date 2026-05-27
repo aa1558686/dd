@@ -1275,18 +1275,23 @@ function ItemForm({ title, children, onCancel, onSave, compact }: {
 }) {
   return (
     <div className={`border border-blue-200 rounded-xl bg-blue-50/30 overflow-hidden ${compact ? '' : 'mb-4'}`}>
-      {/* 顶部：标题 + 取消 */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-blue-100">
+      {/* 顶部：标题 */}
+      <div className="px-4 py-3 border-b border-blue-100">
         <h3 className="text-sm font-medium text-neutral-700">{title}</h3>
-        <button onClick={onCancel} className="text-xs text-neutral-500 hover:text-neutral-800 px-3 py-1.5 rounded-lg hover:bg-neutral-100 transition-colors">取消</button>
       </div>
       {/* 表单内容 */}
       <div className="p-4">{children}</div>
-      {/* 底部：保存按钮（全宽，手机易点击） */}
-      <div className="px-4 pb-4">
+      {/* 底部：取消 + 保存（全宽，手机易点击） */}
+      <div className="px-4 pb-4 flex gap-3">
+        <button
+          onClick={onCancel}
+          className="flex-1 py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-sm font-medium rounded-xl transition-colors"
+        >
+          取消
+        </button>
         <button
           onClick={onSave}
-          className="w-full py-2.5 bg-neutral-900 hover:bg-neutral-700 text-white text-sm font-medium rounded-xl flex items-center justify-center gap-1.5 transition-colors"
+          className="flex-1 py-2.5 bg-neutral-900 hover:bg-neutral-700 text-white text-sm font-medium rounded-xl flex items-center justify-center gap-1.5 transition-colors"
         >
           <Check size={14} /> 保存
         </button>
