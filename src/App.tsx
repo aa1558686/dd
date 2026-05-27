@@ -130,7 +130,8 @@ function MarqueeBanner({ items }: { items: MarqueeItem[] }) {
 
 // ── 广告卡片 ─────────────────────────────────────────────────
 function AdCard({ ad }: { ad: AdItem }) {
-  const colSpan = ad.size === 'large' ? 'md:col-span-4' : ad.size === 'medium' ? 'md:col-span-2' : 'md:col-span-1'
+  // large → 桌面占满 2 列；medium/small → 各占 1 列
+  const colSpan = ad.size === 'large' ? 'sm:col-span-2' : 'sm:col-span-1'
 
   return (
     <motion.a
@@ -139,7 +140,7 @@ function AdCard({ ad }: { ad: AdItem }) {
       rel="noopener noreferrer"
       whileHover={{ scale: 1.015 }}
       whileTap={{ scale: 0.985 }}
-      className={`col-span-2 ${colSpan} flex items-center gap-4 p-4 bg-white border border-neutral-100 rounded-2xl hover:shadow-md hover:border-neutral-200 transition-all group`}
+      className={`col-span-1 ${colSpan} flex items-center gap-4 p-4 bg-white border border-neutral-100 rounded-2xl hover:shadow-md hover:border-neutral-200 transition-all group`}
     >
       {ad.imageUrl && (
         <img src={ad.imageUrl} alt={ad.title} className="w-12 h-12 rounded-xl object-cover shrink-0" />
