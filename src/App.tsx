@@ -458,7 +458,7 @@ export default function App() {
                 <h2 className="text-xs font-semibold text-neutral-400 uppercase tracking-widest mb-3">
                   精品推荐
                 </h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                   {visibleAds.map((ad) => (
                     <AdCard key={ad.id} ad={ad} />
                   ))}
@@ -483,7 +483,7 @@ export default function App() {
                   <p className="text-neutral-300 text-xs mt-1">试试其他关键词？</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                   {[...filteredLinks].sort((a, b) => a.order - b.order).map((link) => (
                     <LinkCard key={link.id} link={link} />
                   ))}
@@ -513,7 +513,7 @@ export default function App() {
                     <h2 className="text-sm font-semibold text-neutral-700">{cat.name}</h2>
                     <span className="text-xs text-neutral-300 ml-1">{catLinks.length}</span>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                     {catLinks.map((link) => (
                       <LinkCard key={link.id} link={link} />
                     ))}
