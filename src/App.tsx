@@ -377,7 +377,7 @@ export default function App() {
         <div className="px-6 py-5 border-b border-neutral-100/80">
           <h1 className="text-lg font-bold text-neutral-900 tracking-tight">{settings.siteTitle}</h1>
           {settings.siteSubtitle && (
-            <p className="text-xs text-neutral-400 mt-0.5 leading-relaxed">{settings.siteSubtitle}</p>
+            <p className="text-[10px] md:text-xs text-neutral-400 mt-0.5 leading-relaxed">{settings.siteSubtitle}</p>
           )}
         </div>
 
