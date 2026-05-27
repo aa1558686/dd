@@ -267,8 +267,16 @@ export default function App() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [showAdmin, setShowAdmin] = useState(false)
   const [mobileSidebar, setMobileSidebar] = useState(false)
+  // 用 JS 判断屏幕宽度，避免依赖 CSS 变量的响应式断点在旧浏览器失效
+  const [isDesktop, setIsDesktop] = useState(() => window.innerWidth >= 768)
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({})
   const mainRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     return subscribeAll({
@@ -357,12 +365,13 @@ export default function App() {
 
       {/* ── 左侧边栏 ──────────────────────────────────────────── */}
       <aside
-        className={`
-          fixed md:relative z-40 md:z-auto h-full w-64 flex flex-col shrink-0
-          border-r border-neutral-100 bg-white/85 backdrop-blur-xl
-          transition-transform duration-300 ease-out
-          ${mobileSidebar ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-        `}
+        className="h-full w-64 flex flex-col shrink-0 border-r border-neutral-100 bg-white/85 backdrop-blur-xl transition-all duration-300 ease-out"
+        style={{
+          position: isDesktop ? 'relative' : 'fixed',
+          zIndex: isDesktop ? 'auto' : 40,
+          // 用 px 值替代 Tailwind CSS 变量，确保旧浏览器也能正确隐藏/显示侧边栏
+          transform: isDesktop ? 'none' : (mobileSidebar ? 'translateX(0)' : 'translateX(-256px)'),
+        }}
       >
         {/* 站点 Logo */}
         <div className="px-6 py-5 border-b border-neutral-100/80">
