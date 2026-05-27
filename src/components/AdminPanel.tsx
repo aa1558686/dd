@@ -489,11 +489,11 @@ function CatFormFields({ data, onChange, customColors, onSaveCustomColor, iconPi
   onToggleIconPicker: () => void
 }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 gap-4">
       <Field label="分类名称" value={data.name ?? ''} onChange={(v) => onChange('name', v)} placeholder="例：常用工具" />
       <Field label="排序权重" value={String(data.order ?? 1)} onChange={(v) => onChange('order', Number(v))} type="number" />
       <ColorInput label="分类颜色" value={data.color ?? ''} onChange={(v) => onChange('color', v)} customColors={customColors} onSaveCustom={onSaveCustomColor} />
-      <div className="space-y-1 sm:col-span-2">
+      <div className="space-y-1 col-span-2">
         <label className="text-xs font-medium text-neutral-500">图标</label>
         <button
           onClick={onToggleIconPicker}
@@ -518,7 +518,7 @@ function CatFormFields({ data, onChange, customColors, onSaveCustomColor, iconPi
           </div>
         )}
       </div>
-      <label className="flex items-center gap-2 sm:col-span-2 cursor-pointer">
+      <label className="flex items-center gap-2 col-span-2 cursor-pointer">
         <input
           type="checkbox"
           checked={data.visible ?? true}
@@ -674,7 +674,7 @@ function LinkFormFields({ data, onChange, categories, customColors, onSaveCustom
   onSaveCustomColor: (c: string) => void
 }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 gap-4">
       <Field label="链接标题 *" value={data.title ?? ''} onChange={(v) => onChange('title', v)} placeholder="网站名称" />
       <Field label="URL *" value={data.url ?? ''} onChange={(v) => onChange('url', v)} placeholder="https://..." />
       <Field label="副标题" value={data.subtitle ?? ''} onChange={(v) => onChange('subtitle', v)} placeholder="简短描述" />
@@ -694,16 +694,16 @@ function LinkFormFields({ data, onChange, categories, customColors, onSaveCustom
       <ColorInput label="卡片背景色" value={data.bgColor ?? ''} onChange={(v) => onChange('bgColor', v)} customColors={customColors} onSaveCustom={onSaveCustomColor} />
       <ColorInput label="文字颜色" value={data.textColor ?? ''} onChange={(v) => onChange('textColor', v)} customColors={customColors} onSaveCustom={onSaveCustomColor} />
       {/* 徽章区域 */}
-      <div className="sm:col-span-2 pt-1 border-t border-neutral-100">
+      <div className="col-span-2 pt-1 border-t border-neutral-100">
         <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">徽章设置（可选）</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <Field label="徽章文字" value={data.badgeText ?? ''} onChange={(v) => onChange('badgeText', v)} placeholder="如：NEW · HOT · 推荐" />
           <div />
           <ColorInput label="徽章文字色" value={data.badgeColor ?? ''} onChange={(v) => onChange('badgeColor', v)} customColors={customColors} onSaveCustom={onSaveCustomColor} />
           <ColorInput label="徽章背景色" value={data.badgeBgColor ?? ''} onChange={(v) => onChange('badgeBgColor', v)} customColors={customColors} onSaveCustom={onSaveCustomColor} />
         </div>
       </div>
-      <label className="flex items-center gap-2 sm:col-span-2 cursor-pointer">
+      <label className="flex items-center gap-2 col-span-2 cursor-pointer">
         <input type="checkbox" checked={data.visible ?? true} onChange={(e) => onChange('visible', e.target.checked)} className="rounded" />
         <span className="text-sm text-neutral-600">显示此链接</span>
       </label>
@@ -839,7 +839,7 @@ function AdFormFields({ data, onChange, customColors, onSaveCustomColor }: {
   onSaveCustomColor: (c: string) => void
 }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 gap-4">
       <Field label="标题 *" value={data.title ?? ''} onChange={(v) => onChange('title', v)} placeholder="推荐站点名称" />
       <Field label="链接 URL *" value={data.url ?? ''} onChange={(v) => onChange('url', v)} placeholder="https://..." />
       <Field label="副标题" value={data.subtitle ?? ''} onChange={(v) => onChange('subtitle', v)} placeholder="简短描述文案" />
@@ -858,13 +858,13 @@ function AdFormFields({ data, onChange, customColors, onSaveCustomColor }: {
         </select>
       </div>
       <Field label="排序权重" value={String(data.order ?? 1)} onChange={(v) => onChange('order', Number(v))} type="number" />
-      <div className="sm:col-span-2 grid grid-cols-2 gap-4">
+      <div className="col-span-2 grid grid-cols-2 gap-4">
         <ColorInput label="标题颜色" value={data.titleColor ?? ''} onChange={(v) => onChange('titleColor', v)} customColors={customColors} onSaveCustom={onSaveCustomColor} />
         <ColorInput label="副标题颜色" value={data.subtitleColor ?? ''} onChange={(v) => onChange('subtitleColor', v)} customColors={customColors} onSaveCustom={onSaveCustomColor} />
         <ColorInput label="徽章文字色" value={data.badgeColor ?? ''} onChange={(v) => onChange('badgeColor', v)} customColors={customColors} onSaveCustom={onSaveCustomColor} />
         <ColorInput label="徽章背景色" value={data.badgeBgColor ?? ''} onChange={(v) => onChange('badgeBgColor', v)} customColors={customColors} onSaveCustom={onSaveCustomColor} />
       </div>
-      <label className="flex items-center gap-2 sm:col-span-2 cursor-pointer">
+      <label className="flex items-center gap-2 col-span-2 cursor-pointer">
         <input type="checkbox" checked={data.visible ?? true} onChange={(e) => onChange('visible', e.target.checked)} className="rounded" />
         <span className="text-sm text-neutral-600">显示此广告位</span>
       </label>
@@ -1206,8 +1206,8 @@ function MarqueeFormFields({ data, onChange, customColors, onSaveCustomColor }: 
   onSaveCustomColor: (c: string) => void
 }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div className="sm:col-span-2">
+    <div className="grid grid-cols-2 gap-4">
+      <div className="col-span-2">
         <Field label="滚动文字 *" value={data.text ?? ''} onChange={(v) => onChange('text', v)} placeholder="欢迎使用导航门户 🎉" />
       </div>
       <ColorInput
@@ -1249,10 +1249,10 @@ function MarqueeFormFields({ data, onChange, customColors, onSaveCustomColor }: 
         </p>
       </div>
       <Field label="排序权重" value={String(data.order ?? 1)} onChange={(v) => onChange('order', Number(v))} type="number" />
-      <div className="sm:col-span-2">
+      <div className="col-span-2">
         <Field label="跳转链接（可选）" value={data.url ?? ''} onChange={(v) => onChange('url', v)} placeholder="https://..." />
       </div>
-      <label className="flex items-center gap-2 sm:col-span-2 cursor-pointer">
+      <label className="flex items-center gap-2 col-span-2 cursor-pointer">
         <input
           type="checkbox"
           checked={data.visible ?? true}
