@@ -173,7 +173,17 @@ function AdCard({ ad }: { ad: AdItem }) {
 }
 
 // ── 链接卡片 ─────────────────────────────────────────────────
+// 根据名称生成固定颜色（字母头像用）
+function getLetterColor(str: string): string {
+  const colors = ['#6366f1', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#f97316', '#ec4899']
+  let hash = 0
+  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash)
+  return colors[Math.abs(hash) % colors.length]
+}
+
 function LinkCard({ link }: { link: LinkItem }) {
+  const [iconError, setIconError] = useState(false)
+
   const hostname = useMemo(() => {
     try {
       return new URL(link.url.startsWith('http') ? link.url : `https://${link.url}`).hostname
@@ -182,7 +192,10 @@ function LinkCard({ link }: { link: LinkItem }) {
     }
   }, [link.url])
 
-  const faviconUrl = link.iconUrl ?? (hostname ? `https://www.google.com/s2/favicons?domain=${hostname}&sz=32` : '')
+  // 优先使用自定义图标，其次 DuckDuckGo（国内可用），失败则显示字母头像
+  const faviconUrl = link.iconUrl || (hostname ? `https://icons.duckduckgo.com/ip3/${hostname}.ico` : '')
+  const showFavicon = !!faviconUrl && !iconError
+  const letter = link.title.charAt(0).toUpperCase()
 
   return (
     <motion.a
@@ -194,29 +207,32 @@ function LinkCard({ link }: { link: LinkItem }) {
       className="flex items-center gap-3 p-3 rounded-xl border border-neutral-100 hover:border-neutral-200 hover:shadow-sm transition-all group cursor-pointer"
       style={link.bgColor ? { background: link.bgColor } : { background: '#fff' }}
     >
-      {faviconUrl ? (
+      {showFavicon ? (
         <img
           src={faviconUrl}
           alt=""
           className="w-8 h-8 rounded-lg object-contain shrink-0 bg-neutral-50 p-0.5"
-          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+          onError={() => setIconError(true)}
         />
       ) : (
-        <div className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center shrink-0">
-          <LucideIcon name={link.icon ?? 'Globe'} size={16} className="text-neutral-400" />
+        <div
+          className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-white text-sm font-bold"
+          style={{ background: getLetterColor(link.title) }}
+        >
+          {letter}
         </div>
       )}
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-start gap-1.5 flex-wrap">
           <p
-            className="text-sm font-medium truncate"
+            className="text-sm font-medium leading-snug"
             style={link.textColor ? { color: link.textColor } : { color: '#171717' }}
           >
             {link.title}
           </p>
           {link.badgeText && (
             <span
-              className="shrink-0 text-xs px-1.5 py-0.5 rounded-full font-medium leading-none"
+              className="shrink-0 text-xs px-1.5 py-0.5 rounded-full font-medium leading-none mt-0.5"
               style={{
                 color: link.badgeColor || '#fff',
                 background: link.badgeBgColor || '#2563eb',
