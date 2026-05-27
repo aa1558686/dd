@@ -489,7 +489,7 @@ function CatFormFields({ data, onChange, customColors, onSaveCustomColor, iconPi
   onToggleIconPicker: () => void
 }) {
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 gap-3">
       <Field label="分类名称" value={data.name ?? ''} onChange={(v) => onChange('name', v)} placeholder="例：常用工具" />
       <Field label="排序权重" value={String(data.order ?? 1)} onChange={(v) => onChange('order', Number(v))} type="number" />
       <ColorInput label="分类颜色" value={data.color ?? ''} onChange={(v) => onChange('color', v)} customColors={customColors} onSaveCustom={onSaveCustomColor} />
@@ -674,7 +674,7 @@ function LinkFormFields({ data, onChange, categories, customColors, onSaveCustom
   onSaveCustomColor: (c: string) => void
 }) {
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 gap-3">
       <Field label="链接标题 *" value={data.title ?? ''} onChange={(v) => onChange('title', v)} placeholder="网站名称" />
       <Field label="URL *" value={data.url ?? ''} onChange={(v) => onChange('url', v)} placeholder="https://..." />
       <Field label="副标题" value={data.subtitle ?? ''} onChange={(v) => onChange('subtitle', v)} placeholder="简短描述" />
@@ -696,7 +696,7 @@ function LinkFormFields({ data, onChange, categories, customColors, onSaveCustom
       {/* 徽章区域 */}
       <div className="col-span-2 pt-1 border-t border-neutral-100">
         <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">徽章设置（可选）</p>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           <Field label="徽章文字" value={data.badgeText ?? ''} onChange={(v) => onChange('badgeText', v)} placeholder="如：NEW · HOT · 推荐" />
           <div />
           <ColorInput label="徽章文字色" value={data.badgeColor ?? ''} onChange={(v) => onChange('badgeColor', v)} customColors={customColors} onSaveCustom={onSaveCustomColor} />
@@ -807,9 +807,23 @@ function AdsTab({ ads, customColors, onAdsChange, onSaveCustomColor }: { ads: Ad
                       {ad.subtitle}
                     </p>
                   )}
-                  <p className="text-xs text-neutral-300 mt-0.5">尺寸: {ad.size} · 排序: {ad.order}</p>
+                  <p className="text-xs text-neutral-300 mt-0.5">{ad.cols ?? 1}列 · 排序: {ad.order}</p>
                 </div>
                 <div className="flex items-center gap-1">
+                  {/* 1列/2列 快捷切换 */}
+                  {([1, 2] as const).map((n) => (
+                    <button
+                      key={n}
+                      onClick={() => { updateAd(ad.id, { cols: n }); onAdsChange(ads.map((a) => a.id === ad.id ? { ...a, cols: n } : a)) }}
+                      className={`text-xs px-2 py-1 rounded-md font-medium transition-colors ${
+                        (ad.cols ?? 1) === n
+                          ? 'bg-neutral-900 text-white'
+                          : 'text-neutral-400 bg-neutral-100 hover:bg-neutral-200'
+                      }`}
+                    >
+                      {n}列
+                    </button>
+                  ))}
                   <button
                     onClick={() => { updateAd(ad.id, { visible: !ad.visible }); onAdsChange(ads.map((a) => a.id === ad.id ? { ...a, visible: !ad.visible } : a)) }}
                     className={`text-xs px-2 py-1 rounded-md ${ad.visible ? 'text-emerald-600 bg-emerald-50' : 'text-neutral-400 bg-neutral-50'}`}
@@ -839,7 +853,7 @@ function AdFormFields({ data, onChange, customColors, onSaveCustomColor }: {
   onSaveCustomColor: (c: string) => void
 }) {
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 gap-3">
       <Field label="标题 *" value={data.title ?? ''} onChange={(v) => onChange('title', v)} placeholder="推荐站点名称" />
       <Field label="链接 URL *" value={data.url ?? ''} onChange={(v) => onChange('url', v)} placeholder="https://..." />
       <Field label="副标题" value={data.subtitle ?? ''} onChange={(v) => onChange('subtitle', v)} placeholder="简短描述文案" />
@@ -1213,7 +1227,7 @@ function MarqueeFormFields({ data, onChange, customColors, onSaveCustomColor }: 
   onSaveCustomColor: (c: string) => void
 }) {
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 gap-3">
       <div className="col-span-2">
         <Field label="滚动文字 *" value={data.text ?? ''} onChange={(v) => onChange('text', v)} placeholder="欢迎使用导航门户 🎉" />
       </div>
@@ -1281,26 +1295,26 @@ function ItemForm({ title, children, onCancel, onSave, compact }: {
   compact?: boolean
 }) {
   return (
-    <div className={`border border-blue-200 rounded-xl bg-blue-50/30 overflow-hidden ${compact ? '' : 'mb-4'}`}>
+    <div className={`border border-blue-200 rounded-xl bg-blue-50/30 ${compact ? '' : 'mb-3'}`}>
       {/* 顶部：标题 */}
-      <div className="px-4 py-3 border-b border-blue-100">
+      <div className="px-4 py-2.5 border-b border-blue-100">
         <h3 className="text-sm font-medium text-neutral-700">{title}</h3>
       </div>
       {/* 表单内容 */}
-      <div className="p-4">{children}</div>
-      {/* 底部：取消 + 保存（全宽，手机易点击） */}
-      <div className="px-4 pb-4 flex gap-3">
+      <div className="p-3">{children}</div>
+      {/* 底部：取消 + 保存，用 inline style 确保旧版浏览器也能并排显示 */}
+      <div style={{ display: 'flex', gap: '10px', padding: '0 12px 12px' }}>
         <button
           onClick={onCancel}
-          className="flex-1 py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-sm font-medium rounded-xl transition-colors"
+          style={{ flex: 1, padding: '10px 0', background: '#f5f5f5', color: '#404040', border: 'none', borderRadius: '10px', fontSize: '14px', fontWeight: 500, cursor: 'pointer' }}
         >
           取消
         </button>
         <button
           onClick={onSave}
-          className="flex-1 py-2.5 bg-neutral-900 hover:bg-neutral-700 text-white text-sm font-medium rounded-xl flex items-center justify-center gap-1.5 transition-colors"
+          style={{ flex: 1, padding: '10px 0', background: '#171717', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '14px', fontWeight: 500, cursor: 'pointer' }}
         >
-          <Check size={14} /> 保存
+          ✓ 保存
         </button>
       </div>
     </div>

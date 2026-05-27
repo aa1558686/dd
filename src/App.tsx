@@ -130,8 +130,8 @@ function MarqueeBanner({ items }: { items: MarqueeItem[] }) {
 
 // ── 广告卡片 ─────────────────────────────────────────────────
 function AdCard({ ad }: { ad: AdItem }) {
-  // cols 字段优先；未设置时 large 默认 2 列，其余 1 列
-  const span = (ad.cols ?? (ad.size === 'large' ? 2 : 1)) === 2 ? 'col-span-2' : 'col-span-1'
+  // 1列 = 独占整行(col-span-2)；2列 = 两个并排(col-span-1)
+  const span = (ad.cols ?? 1) === 1 ? 'col-span-2' : 'col-span-1'
 
   return (
     <motion.a
@@ -455,7 +455,7 @@ export default function App() {
           <MarqueeBanner items={marquees} />
         </div>
 
-        <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-6">
+        <div className="w-full max-w-7xl mx-auto px-3 md:px-8 py-4">
           {/* 精品推荐 / 广告位 */}
           <AnimatePresence>
             {!query && visibleAds.length > 0 && (
@@ -463,7 +463,7 @@ export default function App() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
-                className="mb-8"
+                className="mb-5"
               >
                 <h2 className="text-xs font-semibold text-neutral-400 uppercase tracking-widest mb-3">
                   精品推荐
@@ -516,7 +516,7 @@ export default function App() {
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="mb-8"
+                  className="mb-5"
                 >
                   <div className="flex items-center gap-2 mb-3">
                     <LucideIcon name={cat.icon} size={15} className="text-neutral-400" />
