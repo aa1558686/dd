@@ -10,6 +10,7 @@ export interface AdItem {
   badgeColor?: string;
   badgeBgColor?: string;
   size: 'small' | 'medium' | 'large';
+  cols?: 1 | 2;
   order: number;
   visible: boolean;
 }

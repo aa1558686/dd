@@ -130,8 +130,8 @@ function MarqueeBanner({ items }: { items: MarqueeItem[] }) {
 
 // ── 广告卡片 ─────────────────────────────────────────────────
 function AdCard({ ad }: { ad: AdItem }) {
-  // large → 桌面占满 2 列；medium/small → 各占 1 列
-  const colSpan = ad.size === 'large' ? 'sm:col-span-2' : 'sm:col-span-1'
+  // cols 字段优先；未设置时 large 默认 2 列，其余 1 列
+  const span = (ad.cols ?? (ad.size === 'large' ? 2 : 1)) === 2 ? 'col-span-2' : 'col-span-1'
 
   return (
     <motion.a
@@ -140,7 +140,7 @@ function AdCard({ ad }: { ad: AdItem }) {
       rel="noopener noreferrer"
       whileHover={{ scale: 1.015 }}
       whileTap={{ scale: 0.985 }}
-      className={`col-span-1 ${colSpan} flex items-center gap-4 p-4 bg-white border border-neutral-100 rounded-2xl hover:shadow-md hover:border-neutral-200 transition-all group`}
+      className={`${span} flex items-center gap-4 p-4 bg-white border border-neutral-100 rounded-2xl hover:shadow-md hover:border-neutral-200 transition-all group`}
     >
       {ad.imageUrl && (
         <img src={ad.imageUrl} alt={ad.title} className="w-12 h-12 rounded-xl object-cover shrink-0" />
@@ -468,7 +468,7 @@ export default function App() {
                 <h2 className="text-xs font-semibold text-neutral-400 uppercase tracking-widest mb-3">
                   精品推荐
                 </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                   {visibleAds.map((ad) => (
                     <AdCard key={ad.id} ad={ad} />
                   ))}

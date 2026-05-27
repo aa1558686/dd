@@ -846,16 +846,23 @@ function AdFormFields({ data, onChange, customColors, onSaveCustomColor }: {
       <Field label="封面图 URL" value={data.imageUrl ?? ''} onChange={(v) => onChange('imageUrl', v)} placeholder="https://..." />
       <Field label="徽章文字" value={data.badgeText ?? ''} onChange={(v) => onChange('badgeText', v)} placeholder="推荐 / 赞助" />
       <div className="space-y-1">
-        <label className="text-xs font-medium text-neutral-500">卡片尺寸</label>
-        <select
-          value={data.size ?? 'medium'}
-          onChange={(e) => onChange('size', e.target.value)}
-          className="w-full px-3 py-2 text-sm border border-neutral-200 rounded-xl focus:outline-none bg-white"
-        >
-          <option value="small">Small — 1/4 宽</option>
-          <option value="medium">Medium — 1/2 宽</option>
-          <option value="large">Large — 全宽</option>
-        </select>
+        <label className="text-xs font-medium text-neutral-500">占列数</label>
+        <div className="flex gap-2">
+          {([1, 2] as const).map((n) => (
+            <button
+              key={n}
+              type="button"
+              onClick={() => onChange('cols', n)}
+              className={`flex-1 py-2 text-sm rounded-xl border transition-colors font-medium ${
+                (data.cols ?? 1) === n
+                  ? 'bg-neutral-900 text-white border-neutral-900'
+                  : 'bg-white text-neutral-600 border-neutral-200 hover:border-neutral-400'
+              }`}
+            >
+              {n} 列
+            </button>
+          ))}
+        </div>
       </div>
       <Field label="排序权重" value={String(data.order ?? 1)} onChange={(v) => onChange('order', Number(v))} type="number" />
       <div className="col-span-2 grid grid-cols-2 gap-4">
