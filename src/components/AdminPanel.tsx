@@ -10,7 +10,7 @@ import {
   saveLink, updateLink, deleteLink,
   saveAd, updateAd, deleteAd,
   saveMarquee, updateMarquee, deleteMarquee,
-  updateSettings, isFirebaseConfigured,
+  updateSettings, isFirebaseConfigured, isApiMode,
 } from '../firebase'
 import type { Category, LinkItem, AdItem, SystemSettings, MarqueeItem } from '../types'
 import { FONTS } from './FontSelector'
@@ -289,7 +289,9 @@ export function AdminPanel({ settings, categories, links, ads, marquees, onClose
             <span className="flex items-center gap-1 text-xs text-neutral-400 bg-neutral-50 px-2 py-0.5 rounded-full">
               {isFirebaseConfigured
                 ? <><Wifi size={11} className="text-emerald-500" />云端同步</>
-                : <><WifiOff size={11} className="text-amber-500" />本地模式</>
+                : isApiMode
+                  ? <><Wifi size={11} style={{ color: '#3b82f6' }} />服务器同步</>
+                  : <><WifiOff size={11} className="text-amber-500" />本地模式</>
               }
             </span>
           </div>
@@ -1070,12 +1072,18 @@ function SettingsTab({ settings, onSettingsChange }: { settings: SystemSettings;
         </button>
       </div>
 
-      {!isFirebaseConfigured && (
+      {!isFirebaseConfigured && !isApiMode && (
         <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-700">
           <p className="font-medium">提示：当前为本地存储模式</p>
           <p className="text-xs mt-1 text-amber-600">
-            在 <code className="bg-amber-100 px-1 rounded">src/firebase.ts</code> 中填写您的 Firebase 配置，即可开启多端实时同步。
+            数据仅保存在当前浏览器，刷新不丢失，但换设备无法同步。
           </p>
+        </div>
+      )}
+      {isApiMode && (
+        <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl text-sm text-blue-700">
+          <p className="font-medium">服务器同步模式</p>
+          <p className="text-xs mt-1 text-blue-600">数据保存在服务器，多设备实时同步。</p>
         </div>
       )}
     </div>

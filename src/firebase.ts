@@ -312,6 +312,7 @@ export async function updateSettings(data: Partial<SystemSettings>): Promise<voi
 }
 
 export { isConfigured as isFirebaseConfigured }
+export { useApi as isApiMode }
 
 // ── 初始化数据（样本数据首次写入）──────────────────────────
 export async function initLocalStorage(data: {
