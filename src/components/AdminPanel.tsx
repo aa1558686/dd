@@ -324,11 +324,10 @@ export function AdminPanel({ settings, categories, links, ads, marquees, onClose
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-all ${
-                tab === t
-                  ? 'bg-neutral-900 text-white'
-                  : 'text-neutral-500 hover:text-neutral-800 hover:bg-neutral-50'
-              }`}
+              style={tab === t
+                ? { background: '#171717', color: '#fff', borderRadius: '8px', padding: '8px 16px', fontSize: '14px', fontWeight: 500, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }
+                : { background: 'transparent', color: '#737373', borderRadius: '8px', padding: '8px 16px', fontSize: '14px', fontWeight: 500, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }
+              }
             >
               {label}
             </button>
@@ -410,7 +409,7 @@ function CategoriesTab({ categories, customColors, onCategoriesChange, onSaveCus
         <h2 className="text-sm font-semibold text-neutral-700">分类列表 ({categories.length})</h2>
         <button
           onClick={() => { setAdding(true); setEditId(null) }}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-900 text-white text-xs font-medium rounded-lg hover:bg-neutral-700 transition-colors"
+          style={{ background: '#171717', color: '#fff', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: 'pointer', flexShrink: 0 }}
         >
           <Plus size={13} /> 新建分类
         </button>
@@ -597,7 +596,7 @@ function LinksTab({ links, categories, customColors, onLinksChange, onSaveCustom
         <span className="text-xs text-neutral-400 flex-1">{sorted.length} 个链接</span>
         <button
           onClick={() => { setAdding(true); setEditId(null) }}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-900 text-white text-xs font-medium rounded-lg hover:bg-neutral-700 transition-colors"
+          style={{ background: '#171717', color: '#fff', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: 'pointer', flexShrink: 0 }}
         >
           <Plus size={13} /> 新建链接
         </button>
@@ -754,7 +753,7 @@ function AdsTab({ ads, customColors, onAdsChange, onSaveCustomColor }: { ads: Ad
         <h2 className="text-sm font-semibold text-neutral-700">广告位 / 精品推荐 ({ads.length})</h2>
         <button
           onClick={() => { setAdding(true); setEditId(null) }}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-900 text-white text-xs font-medium rounded-lg hover:bg-neutral-700 transition-colors"
+          style={{ background: '#171717', color: '#fff', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: 'pointer', flexShrink: 0 }}
         >
           <Plus size={13} /> 新建广告位
         </button>
@@ -1136,7 +1135,7 @@ function MarqueeTab({ marquees, customColors, onMarqueesChange, onSaveCustomColo
         </div>
         <button
           onClick={() => { setAdding(true); setEditId(null) }}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-900 text-white text-xs font-medium rounded-lg hover:bg-neutral-700 transition-colors"
+          style={{ background: '#171717', color: '#fff', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: 'pointer', flexShrink: 0 }}
         >
           <Plus size={13} /> 新建条目
         </button>
